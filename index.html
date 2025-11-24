@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高中英文特訓班：Grammar Elite</title>
+    <style>
+        :root {
+            /* 深色系主題，適合高中生專注學習 */
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #38bdf8;   /* 亮藍色 */
+            --accent: #818cf8;    /* 紫藍色 */
+            --success: #10b981;
+            --error: #f43f5e;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
+        /* --- Grid Menu --- */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .topic-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .topic-num {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .topic-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .topic-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        
+        .tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-sub);
+        }
+        .tag.highlight {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        /* --- Game Interface --- */
+        #game-interface {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .game-bar {
+            background: rgba(0,0,0,0.2);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .btn-text {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 5px 10px;
+            transition: color 0.2s;
+        }
+        .btn-text:hover { color: var(--text-main); }
+
+        .concept-box {
+            background: rgba(56, 189, 248, 0.05); /* Very light blue tint */
+            padding: 25px;
+            border-left: 4px solid var(--primary);
+        }
+        .concept-title {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .concept-content {
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+        .concept-content strong { color: var(--accent); }
+
+        .quiz-area {
+            padding: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            margin-bottom: 25px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .question {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr; /* Mobile first */
+            gap: 15px;
+        }
+        @media (min-width: 600px) {
+            .options { grid-template-columns: 1fr 1fr; }
+        }
+
+        .opt-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .opt-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--text-sub);
+        }
+
+        .opt-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success); }
+        .opt-btn.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--error); }
+
+        .explanation {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .next-btn {
+            display: none;
+            margin-top: 20px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            float: right;
+        }
+        .next-btn:hover { background: #7dd3fc; }
+
+        /* --- Result --- */
+        #result-view {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0 auto 30px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+        .action-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header id="main-header">
+        <h1>高中英文特訓班 Grammar Elite</h1>
+        <div class="subtitle">針對學測/分科設計 • 14 大核心文法單元</div>
+    </header>
+
+    <!-- Menu View -->
+    <div id="menu-view" class="menu-grid"></div>
+
+    <!-- Game Interface -->
+    <div id="game-interface">
+        <div class="game-bar">
+            <button class="btn-text" onclick="showMenu()">❮ EXIT</button>
+            <span style="color:var(--text-sub); font-size:0.9rem;" id="level-indicator">UNIT 01</span>
+        </div>
+        
+        <div class="concept-box" id="concept-area"></div>
+
+        <div class="quiz-area">
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <div class="question" id="question-text"></div>
+            <div class="options" id="options-area"></div>
+            
+            <div class="explanation" id="explanation-area"></div>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">NEXT QUESTION ➔</button>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+
+    <!-- Result View -->
+    <div id="result-view">
+        <h2 style="color:var(--text-sub)">UNIT COMPLETE</h2>
+        <div class="score-circle" id="final-score">100</div>
+        <p id="result-msg">Excellent job!</p>
+        <button class="action-btn" onclick="showMenu()">Return to Dashboard</button>
+    </div>
+</div>
+
+<script>
+    /*
+      Data Structure designed for High School Syllabus
+      Complexity Level: CEFR B1/B2
+    */
+    const syllabus = [
+        {
+            id: 1,
+            title: "句子結構與五大句型",
+            tags: ["Sentence Structure", "Clasues"],
+            concept: "<strong>五大句型</strong>決定句子的骨架 (S+V+O+C)。<br>注意<strong>名詞子句</strong>當主詞/受詞，<strong>形容詞子句</strong>修飾名詞，以及連接詞的邏輯。",
+            questions: [
+                { q: "We found the movie ___.", options: ["bored", "boringly", "boring", "bore"], ans: 2, explain: "本句為 S+V+O+C (感官/覺得)。受詞 the movie 是事物，補語用 V-ing (令人...的)，故選 boring。" },
+                { q: "___ he will come is still unknown.", options: ["That", "What", "Which", "If"], ans: 3, explain: "這裡需要一個名詞子句當主詞。If (是否) 引導名詞子句時，通常不放句首 (句首習慣用 Whether)，但在口語或此選項中，若無 Whether，That 表示「這件事」是確定的，但句意是 unknown (未知)，故 If/Whether 語意才通。但正式文法句首用 Whether，此題若選 That 語意矛盾。修正：此題意在考 Whether/That 區別。若選項改為 [That, Whether, What, Which]，應選 Whether。此處若選 That 代表「他會來」這件事是未知的(邏輯怪)。最佳解應是 Whether，若無 Whether，此題設計意在考名詞子句完整性，選 That 文法對但語意怪；選 If 句首少見。讓我們修正題目為標準考法：'___ he is rich or not doesn't matter.' -> Whether。" }, // 修正為更精確的題目
+                { q: "The reason ___ he was late was simply unknown.", options: ["which", "why", "that", "because"], ans: 1, explain: "先行詞是 The reason，關係副詞用 why (或 that)。" },
+                { q: "He is rich, ___ he is not happy.", options: ["so", "but", "therefore", "however"], ans: 1, explain: "逗號連接兩個子句，需要對等連接詞 (and/but/or)。However 是副詞，不能單獨連接兩個子句(需用分號)。" }
+            ]
+        },
+        {
+            id: 2,
+            title: "進階時態整合",
+            tags: ["Perfect Tense", "Future"],
+            concept: "高中重點：<strong>完成進行式</strong> (一直持續到某時)、<strong>未來完成式</strong> (到未來某時將已經...)、過去完成式 (比過去更早)。",
+            questions: [
+                { q: "By next year, I ___ here for ten years.", options: ["will live", "will have lived", "have lived", "am living"], ans: 1, explain: "看到 'By next year' (到明年為止) + 'for ten years' (持續一段時間)，需用「未來完成式」(will have p.p.)。" },
+                { q: "When I arrived at the station, the train ___.", options: ["left", "has left", "had left", "was leaving"], ans: 2, explain: "我到達(過去式)之前，火車「已經」走了(比過去更早)，用「過去完成式」(had p.p.)。" },
+                { q: "She is tired because she ___ all day.", options: ["is working", "has been working", "worked", "had worked"], ans: 1, explain: "現在覺得累，是因為「從過去一直持續到現在」的動作，用「現在完成進行式」(has been V-ing)。" }
+            ]
+        },
+        {
+            id: 3,
+            title: "助動詞與假設推測",
+            tags: ["Modals", "Assumption"],
+            concept: "重點：<strong>助動詞 + have p.p.</strong> 表對過去的推測或惋惜。<br>Must have p.p. (一定已經)、Should have p.p. (本該做卻沒做)。",
+            questions: [
+                { q: "The ground is wet. It ___ last night.", options: ["must rain", "should rain", "must have rained", "should have rained"], ans: 2, explain: "對「過去」事實的強烈推測(一定有下雨)，用 must have p.p.。" },
+                { q: "You ___ me the truth, but you didn't.", options: ["should tell", "must tell", "should have told", "must have told"], ans: 2, explain: "「本來應該做...但實際上沒做」，用 should have p.p.。" },
+                { q: "He ___ be at home; I saw him in the park just now.", options: ["mustn't", "can't", "shouldn't", "won't"], ans: 1, explain: "表示「不可能」(否定推測)，用 can't (cannot)。mustn't 是「禁止」。" }
+            ]
+        },
+        {
+            id: 4,
+            title: "被動語態進階",
+            tags: ["Passive Voice"],
+            concept: "注意：<strong>進行式的被動</strong> (being p.p.)、<strong>完成式的被動</strong> (been p.p.) 以及省略 by 的情況。",
+            questions: [
+                { q: "The new bridge is currently ___.", options: ["building", "been built", "being built", "built"], ans: 2, explain: "現在進行式的被動：is/am/are + being + p.p.。橋正在「被」蓋。" },
+                { q: "The problem has already ___.", options: ["solved", "been solved", "being solved", "solving"], ans: 1, explain: "現在完成式的被動：have/has + been + p.p.。" },
+                { q: "He was seen ___ the house.", options: ["enter", "to enter", "entering", "entered"], ans: 1, explain: "感官動詞(see)改被動時，原形動詞(enter)要變回不定詞(to enter)。" }
+            ]
+        },
+        {
+            id: 5,
+            title: "名詞、代名詞與關代",
+            tags: ["Nouns", "Pronouns"],
+            concept: "關係代名詞：Who(人主格), Whom(人受格), Which(物), That(通用), Whose(所有格)。不定代名詞 Both/Either/Neither。",
+            questions: [
+                { q: "The professor ___ I respect is retiring.", options: ["who", "whom", "which", "what"], ans: 1, explain: "先行詞 Professor 是人，且在子句中當 respect 的「受詞」，正式用法用 Whom (口語可用 Who)。" },
+                { q: "He has two sons; ___ of them are doctors.", options: ["all", "both", "either", "none"], ans: 1, explain: "兩者都...用 Both。All 用於三者以上。" },
+                { q: "I have a friend ___ father is a pilot.", options: ["who", "whom", "whose", "which"], ans: 2, explain: "表示「他的」父親，用所有格關代 Whose。" }
+            ]
+        },
+        {
+            id: 6,
+            title: "形容詞與副詞比較",
+            tags: ["Comparison", "Transition"],
+            concept: "倍數比較：<strong>twice as adj as</strong>。<br>連接副詞：However (然而), Therefore (因此), Moreover (此外)，需用分號或句點隔開。",
+            questions: [
+                { q: "This room is ___ that one.", options: ["twice big as", "twice as big as", "as twice big as", "twice bigger than"], ans: 1, explain: "倍數用法：倍數 + as + adj + as。" },
+                { q: "He studied hard; ___, he failed the test.", options: ["therefore", "moreover", "however", "otherwise"], ans: 2, explain: "語意轉折 (努力但失敗)，用 However (然而)。" },
+                { q: "Of the two boys, Tom is the ___.", options: ["taller", "tallest", "more tall", "tall"], ans: 0, explain: "「兩者」之中較...，雖然有 the，但兩者比較仍用比較級 (the taller)。三者以上才用最高級。" }
+            ]
+        },
+        {
+            id: 7,
+            title: "特殊動詞形式",
+            tags: ["Causative", "Senses"],
+            concept: "使役動詞：Make/Have/Let + 原V (主動)。Get + to V。<br>感官動詞：See/Hear + 原V (全程) 或 V-ing (正在)。",
+            questions: [
+                { q: "I got him ___ the car.", options: ["wash", "to wash", "washing", "washed"], ans: 1, explain: "Get 當使役動詞(叫某人做)時，主動語態要搭配 to V。" },
+                { q: "The boss made us ___ overtime.", options: ["work", "to work", "working", "worked"], ans: 0, explain: "Make (強迫) + O + 原形動詞。" },
+                { q: "I felt the house ___.", options: ["shook", "to shake", "shaking", "shake to"], ans: 2, explain: "感官動詞 feel + O + Ving (表示感覺到正在搖晃) 或 原形。" }
+            ]
+        },
+        {
+            id: 8,
+            title: "介係詞與片語",
+            tags: ["Prepositions"],
+            concept: "高中常用片語：According to (根據), Because of (因為), Instead of (代替), In spite of (儘管)。",
+            questions: [
+                { q: "The game was canceled ___ the rain.", options: ["because", "due", "because of", "since"], ans: 2, explain: "the rain 是名詞，前面要用介係詞片語 Because of。Because 後面要接子句。" },
+                { q: "___ the bad weather, we went hiking.", options: ["Although", "In spite of", "Even if", "Because of"], ans: 1, explain: "儘管天氣不好 (名詞片語)，用 In spite of。Although 後面要接子句。" },
+                { q: "I'll have tea ___ coffee.", options: ["instead", "instead of", "replace", "exchange"], ans: 1, explain: "Instead of (代替/而不是) + 名詞。" }
+            ]
+        },
+        {
+            id: 9,
+            title: "進階連接詞",
+            tags: ["Conjunctions"],
+            concept: "雖然：Although/Though。除非：Unless (=If not)。<br>一旦：As soon as。只要：Provided that。",
+            questions: [
+                { q: "You will fail ___ you study harder.", options: ["if", "unless", "when", "because"], ans: 1, explain: "Unless = If...not。句意：你會失敗，「除非」你更努力讀書。" },
+                { q: "___ he is rich, he is stingy.", options: ["Despite", "In spite of", "Although", "However"], ans: 2, explain: "he is rich 是子句，用連接詞 Although (雖然)。Despite 接名詞。" },
+                { q: "I will leave ___ he arrives.", options: ["as soon as", "so that", "unless", "provided"], ans: 0, explain: "As soon as (一...就...)。" }
+            ]
+        },
+        {
+            id: 10,
+            title: "子句與倒裝",
+            tags: ["Clauses", "Inversion"],
+            concept: "限定 vs 非限定(逗號)。<br>否定副詞放句首的倒裝：Never/Rarely/Only then + 助動詞 + S + V。",
+            questions: [
+                { q: "Only then ___ realize my mistake.", options: ["I did", "did I", "I had", "had I"], ans: 1, explain: "Only + 時間副詞放句首，句子要倒裝 (助動詞移到主詞前)。" },
+                { q: "My father, ___ lives in Taipei, is a doctor.", options: ["that", "who", "which", "whom"], ans: 1, explain: "非限定用法 (有逗號)，補充說明獨一無二的對象，不能用 That，人要用 Who。" },
+                { q: "Never ___ such a beautiful sight.", options: ["I have seen", "have I seen", "did I see", "I saw"], ans: 1, explain: "Never 放句首，倒裝。完成式倒裝：Have + S + p.p.。" }
+            ]
+        },
+        {
+            id: 11,
+            title: "分詞構句 (高階必考)",
+            tags: ["Participles"],
+            concept: "<strong>分詞構句</strong>：簡化子句。<br>主動用 V-ing，被動用 p.p.。注意省略的主詞必須與主要子句主詞一致。",
+            questions: [
+                { q: "___ by the dog, the boy cried.", options: ["Biting", "Bit", "Bitten", "To bite"], ans: 2, explain: "男孩是「被」狗咬，省略了 Because he was...，保留 p.p. (Bitten)。" },
+                { q: "___ the room, I saw a spider.", options: ["Entered", "Entering", "Enter", "To enter"], ans: 1, explain: "我進入房間 (主動)，省略 When I entered...，改為 V-ing (Entering)。" },
+                { q: "The girl ___ in the corner is my sister.", options: ["stands", "standing", "stood", "is standing"], ans: 1, explain: "形容詞子句簡化：The girl (who is) standing...，主動用 V-ing 修飾名詞。" }
+            ]
+        },
+        {
+            id: 12,
+            title: "直接與間接引語",
+            tags: ["Reported Speech"],
+            concept: "時態後退：現在→過去，過去→過完。<br>疑問句改間接問句：Ask if/whether... 或 Ask wh-word + S + V。",
+            questions: [
+                { q: "He said, 'I am busy.' → He said that he ___ busy.", options: ["is", "was", "were", "had been"], ans: 1, explain: "主要動詞 said 是過去式，引號內的 am 要退一步變成 was。" },
+                { q: "She asked me ___.", options: ["where was I", "where I was", "where am I", "I was where"], ans: 1, explain: "間接問句不倒裝，順序為：疑問詞 + S + V。" },
+                { q: "Tom said he ___ the movie before.", options: ["saw", "has seen", "had seen", "sees"], ans: 2, explain: "他說話時(過去)，看電影是「更早之前」的事，故用過去完成式 had seen。" }
+            ]
+        },
+        {
+            id: 13,
+            title: "虛主詞與分裂句",
+            tags: ["It patterns"],
+            concept: "虛主詞：It is adj to V。<br>分裂句(強調)：It is ... that ... (正是...發生了...)。",
+            questions: [
+                { q: "It is important for us ___ English.", options: ["learn", "learning", "to learn", "learned"], ans: 2, explain: "虛主詞 It ... to V 句型。" },
+                { q: "It was John ___ broke the window.", options: ["who", "which", "what", "whom"], ans: 0, explain: "強調句 It is/was X that/who...。強調人可用 who 或 that。" },
+                { q: "I found ___ difficult to finish the job.", options: ["that", "this", "it", "x"], ans: 2, explain: "虛受詞 it。I found it adj to V。" }
+            ]
+        },
+        {
+            id: 14,
+            title: "文意推論與克漏字",
+            tags: ["Reading Grammar"],
+            concept: "綜合應用：判斷代名詞指涉對象、連接詞的邏輯關係、子句結構分析。",
+            questions: [
+                { q: "Technology helps us; ___, it creates new problems.", options: ["similarly", "for example", "on the other hand", "consequently"], ans: 2, explain: "前句講好處(help)，後句講壞處(problems)，語氣轉折，選 On the other hand (另一方面)。" },
+                { q: "Students ___ study hard will succeed.", options: ["who", "which", "whom", "where"], ans: 0, explain: "關係代名詞當主詞，修飾 Students (人)，用 Who。" },
+                { q: "Some agree, while ___ disagree.", options: ["another", "other", "others", "the other"], ans: 2, explain: "Some... others... (有些人...另有些人...) 的固定用法。" }
+            ]
+        }
+    ];
+
+    // --- Core Logic ---
+    let currentUnit = null;
+    let currentQIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+
+    const menuView = document.getElementById('menu-view');
+    const gameInterface = document.getElementById('game-interface');
+    const resultView = document.getElementById('result-view');
+    const header = document.getElementById('main-header');
+
+    // Init
+    function init() {
+        syllabus.forEach(item => {
+            // Update Syllabus Question Text for logic fix in ID 1
+            if(item.id === 1) {
+                 item.questions[1].q = "___ he comes or not doesn't matter. (請選出最佳連接詞)";
+                 item.questions[1].options = ["That", "Whether", "What", "Which"];
+                 item.questions[1].ans = 1;
+                 item.questions[1].explain = "Whether...or not 是標準的名詞子句用法，表「是否」。";
+            }
+
+            const card = document.createElement('div');
+            card.className = 'topic-card';
+            card.onclick = () => loadUnit(item.id);
+            
+            let tagsHtml = item.tags.map(t => `<span class="tag ${t==='Participles'?'highlight':''}">${t}</span>`).join('');
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="topic-num">UNIT ${item.id.toString().padStart(2, '0')}</span>
+                </div>
+                <div class="topic-title">${item.title}</div>
+                <div class="topic-tags">${tagsHtml}</div>
+            `;
+            menuView.appendChild(card);
+        });
+    }
+
+    function loadUnit(id) {
+        currentUnit = syllabus.find(u => u.id === id);
+        currentQIndex = 0;
+        score = 0;
+        correctCount = 0;
+
+        menuView.style.display = 'none';
+        header.style.display = 'none';
+        resultView.style.display = 'none';
+        gameInterface.style.display = 'block';
+
+        document.getElementById('level-indicator').innerText = `UNIT ${id.toString().padStart(2, '0')} : ${currentUnit.title}`;
+        document.getElementById('concept-area').innerHTML = `
+            <div class="concept-title">⚡ High School Grammar Point</div>
+            <div class="concept-content">${currentUnit.concept}</div>
+        `;
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const qData = currentUnit.questions[currentQIndex];
+        
+        // UI Reset
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('explanation-area').style.display = 'none';
+        const progress = ((currentQIndex) / currentUnit.questions.length) * 100;
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+
+        document.getElementById('question-text').innerText = `${currentQIndex + 1}. ${qData.q}`;
+        
+        const optsDiv = document.getElementById('options-area');
+        optsDiv.innerHTML = '';
+
+        qData.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(idx, btn);
+            optsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIdx, btnElement) {
+        const qData = currentUnit.questions[currentQIndex];
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        const isCorrect = selectedIdx === qData.ans;
+        
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            score += 100 / currentUnit.questions.length;
+            correctCount++;
+        } else {
+            btnElement.classList.add('wrong');
+            allBtns[qData.ans].classList.add('correct');
+        }
+
+        const explainDiv = document.getElementById('explanation-area');
+        explainDiv.innerHTML = `<strong>${isCorrect ? 'Correct!' : 'Incorrect.'}</strong><br>${qData.explain}`;
+        explainDiv.style.display = 'block';
+        explainDiv.style.borderColor = isCorrect ? 'var(--success)' : 'var(--error)';
+
+        document.getElementById('next-btn').style.display = 'block';
+        
+        // Update progress bar to next step logic visually
+        document.getElementById('progress-fill').style.width = `${((currentQIndex + 1) / currentUnit.questions.length) * 100}%`;
+    }
+
+    function nextQuestion() {
+        if (currentQIndex < currentUnit.questions.length - 1) {
+            currentQIndex++;
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        gameInterface.style.display = 'none';
+        resultView.style.display = 'block';
+        
+        const finalScore = Math.round(score);
+        const scoreEl = document.getElementById('final-score');
+        const msgEl = document.getElementById('result-msg');
+        
+        scoreEl.innerText = finalScore;
+        
+        if (finalScore === 100) {
+            scoreEl.style.borderColor = "var(--success)";
+            msgEl.innerText = "Perfect! You've mastered this topic. 🎓";
+        } else if (finalScore >= 60) {
+            scoreEl.style.borderColor = "var(--primary)";
+            msgEl.innerText = "Good job! Review the mistakes and try again. 👍";
+        } else {
+            scoreEl.style.borderColor = "var(--error)";
+            msgEl.innerText = "Keep practicing! Don't give up. 💪";
+        }
+    }
+
+    function showMenu() {
+        gameInterface.style.display = 'none';
+        resultView.style.display = 'none';
+        menuView.style.display = 'grid';
+        header.style.display = 'block';
+    }
+
+    init();
+</script>
+
+</body>
+</html>
