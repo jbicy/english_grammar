@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高中英文特訓班：Grammar Elite</title>
+    <title>高中英文特訓班：Grammar Elite (題庫版)</title>
     <style>
         :root {
             /* 深色系主題，適合高中生專注學習 */
@@ -292,13 +292,11 @@
 <div class="container">
     <header id="main-header">
         <h1>高中英文特訓班 Grammar Elite</h1>
-        <div class="subtitle">針對學測/分科設計 • 14 大核心文法單元</div>
+        <div class="subtitle">針對學測/分科設計 • 隨機抽題實戰演練</div>
     </header>
 
-    <!-- Menu View -->
     <div id="menu-view" class="menu-grid"></div>
 
-    <!-- Game Interface -->
     <div id="game-interface">
         <div class="game-bar">
             <button class="btn-text" onclick="showMenu()">❮ EXIT</button>
@@ -318,7 +316,6 @@
         </div>
     </div>
 
-    <!-- Result View -->
     <div id="result-view">
         <h2 style="color:var(--text-sub)">UNIT COMPLETE</h2>
         <div class="score-circle" id="final-score">100</div>
@@ -328,316 +325,530 @@
 </div>
 
 <script>
-    /*
-      Data Structure designed for High School Syllabus
-      Complexity Level: CEFR B1/B2
-    */
-    const syllabus = [
-        {
-            id: 1,
-            title: "句子結構與五大句型",
-            tags: ["Sentence Structure", "Clasues"],
-            concept: "<strong>五大句型</strong>決定句子的骨架 (S+V+O+C)。<br>注意<strong>名詞子句</strong>當主詞/受詞，<strong>形容詞子句</strong>修飾名詞，以及連接詞的邏輯。",
-            questions: [
-                { q: "We found the movie ___.", options: ["bored", "boringly", "boring", "bore"], ans: 2, explain: "本句為 S+V+O+C (感官/覺得)。受詞 the movie 是事物，補語用 V-ing (令人...的)，故選 boring。" },
-                { q: "___ he will come is still unknown.", options: ["That", "What", "Which", "If"], ans: 3, explain: "這裡需要一個名詞子句當主詞。If (是否) 引導名詞子句時，通常不放句首 (句首習慣用 Whether)，但在口語或此選項中，若無 Whether，That 表示「這件事」是確定的，但句意是 unknown (未知)，故 If/Whether 語意才通。但正式文法句首用 Whether，此題若選 That 語意矛盾。修正：此題意在考 Whether/That 區別。若選項改為 [That, Whether, What, Which]，應選 Whether。此處若選 That 代表「他會來」這件事是未知的(邏輯怪)。最佳解應是 Whether，若無 Whether，此題設計意在考名詞子句完整性，選 That 文法對但語意怪；選 If 句首少見。讓我們修正題目為標準考法：'___ he is rich or not doesn't matter.' -> Whether。" }, // 修正為更精確的題目
-                { q: "The reason ___ he was late was simply unknown.", options: ["which", "why", "that", "because"], ans: 1, explain: "先行詞是 The reason，關係副詞用 why (或 that)。" },
-                { q: "He is rich, ___ he is not happy.", options: ["so", "but", "therefore", "however"], ans: 1, explain: "逗號連接兩個子句，需要對等連接詞 (and/but/or)。However 是副詞，不能單獨連接兩個子句(需用分號)。" }
-            ]
-        },
-        {
-            id: 2,
-            title: "進階時態整合",
-            tags: ["Perfect Tense", "Future"],
-            concept: "高中重點：<strong>完成進行式</strong> (一直持續到某時)、<strong>未來完成式</strong> (到未來某時將已經...)、過去完成式 (比過去更早)。",
-            questions: [
-                { q: "By next year, I ___ here for ten years.", options: ["will live", "will have lived", "have lived", "am living"], ans: 1, explain: "看到 'By next year' (到明年為止) + 'for ten years' (持續一段時間)，需用「未來完成式」(will have p.p.)。" },
-                { q: "When I arrived at the station, the train ___.", options: ["left", "has left", "had left", "was leaving"], ans: 2, explain: "我到達(過去式)之前，火車「已經」走了(比過去更早)，用「過去完成式」(had p.p.)。" },
-                { q: "She is tired because she ___ all day.", options: ["is working", "has been working", "worked", "had worked"], ans: 1, explain: "現在覺得累，是因為「從過去一直持續到現在」的動作，用「現在完成進行式」(has been V-ing)。" }
-            ]
-        },
-        {
-            id: 3,
-            title: "助動詞與假設推測",
-            tags: ["Modals", "Assumption"],
-            concept: "重點：<strong>助動詞 + have p.p.</strong> 表對過去的推測或惋惜。<br>Must have p.p. (一定已經)、Should have p.p. (本該做卻沒做)。",
-            questions: [
-                { q: "The ground is wet. It ___ last night.", options: ["must rain", "should rain", "must have rained", "should have rained"], ans: 2, explain: "對「過去」事實的強烈推測(一定有下雨)，用 must have p.p.。" },
-                { q: "You ___ me the truth, but you didn't.", options: ["should tell", "must tell", "should have told", "must have told"], ans: 2, explain: "「本來應該做...但實際上沒做」，用 should have p.p.。" },
-                { q: "He ___ be at home; I saw him in the park just now.", options: ["mustn't", "can't", "shouldn't", "won't"], ans: 1, explain: "表示「不可能」(否定推測)，用 can't (cannot)。mustn't 是「禁止」。" }
-            ]
-        },
-        {
-            id: 4,
-            title: "被動語態進階",
-            tags: ["Passive Voice"],
-            concept: "注意：<strong>進行式的被動</strong> (being p.p.)、<strong>完成式的被動</strong> (been p.p.) 以及省略 by 的情況。",
-            questions: [
-                { q: "The new bridge is currently ___.", options: ["building", "been built", "being built", "built"], ans: 2, explain: "現在進行式的被動：is/am/are + being + p.p.。橋正在「被」蓋。" },
-                { q: "The problem has already ___.", options: ["solved", "been solved", "being solved", "solving"], ans: 1, explain: "現在完成式的被動：have/has + been + p.p.。" },
-                { q: "He was seen ___ the house.", options: ["enter", "to enter", "entering", "entered"], ans: 1, explain: "感官動詞(see)改被動時，原形動詞(enter)要變回不定詞(to enter)。" }
-            ]
-        },
-        {
-            id: 5,
-            title: "名詞、代名詞與關代",
-            tags: ["Nouns", "Pronouns"],
-            concept: "關係代名詞：Who(人主格), Whom(人受格), Which(物), That(通用), Whose(所有格)。不定代名詞 Both/Either/Neither。",
-            questions: [
-                { q: "The professor ___ I respect is retiring.", options: ["who", "whom", "which", "what"], ans: 1, explain: "先行詞 Professor 是人，且在子句中當 respect 的「受詞」，正式用法用 Whom (口語可用 Who)。" },
-                { q: "He has two sons; ___ of them are doctors.", options: ["all", "both", "either", "none"], ans: 1, explain: "兩者都...用 Both。All 用於三者以上。" },
-                { q: "I have a friend ___ father is a pilot.", options: ["who", "whom", "whose", "which"], ans: 2, explain: "表示「他的」父親，用所有格關代 Whose。" }
-            ]
-        },
-        {
-            id: 6,
-            title: "形容詞與副詞比較",
-            tags: ["Comparison", "Transition"],
-            concept: "倍數比較：<strong>twice as adj as</strong>。<br>連接副詞：However (然而), Therefore (因此), Moreover (此外)，需用分號或句點隔開。",
-            questions: [
-                { q: "This room is ___ that one.", options: ["twice big as", "twice as big as", "as twice big as", "twice bigger than"], ans: 1, explain: "倍數用法：倍數 + as + adj + as。" },
-                { q: "He studied hard; ___, he failed the test.", options: ["therefore", "moreover", "however", "otherwise"], ans: 2, explain: "語意轉折 (努力但失敗)，用 However (然而)。" },
-                { q: "Of the two boys, Tom is the ___.", options: ["taller", "tallest", "more tall", "tall"], ans: 0, explain: "「兩者」之中較...，雖然有 the，但兩者比較仍用比較級 (the taller)。三者以上才用最高級。" }
-            ]
-        },
-        {
-            id: 7,
-            title: "特殊動詞形式",
-            tags: ["Causative", "Senses"],
-            concept: "使役動詞：Make/Have/Let + 原V (主動)。Get + to V。<br>感官動詞：See/Hear + 原V (全程) 或 V-ing (正在)。",
-            questions: [
-                { q: "I got him ___ the car.", options: ["wash", "to wash", "washing", "washed"], ans: 1, explain: "Get 當使役動詞(叫某人做)時，主動語態要搭配 to V。" },
-                { q: "The boss made us ___ overtime.", options: ["work", "to work", "working", "worked"], ans: 0, explain: "Make (強迫) + O + 原形動詞。" },
-                { q: "I felt the house ___.", options: ["shook", "to shake", "shaking", "shake to"], ans: 2, explain: "感官動詞 feel + O + Ving (表示感覺到正在搖晃) 或 原形。" }
-            ]
-        },
-        {
-            id: 8,
-            title: "介係詞與片語",
-            tags: ["Prepositions"],
-            concept: "高中常用片語：According to (根據), Because of (因為), Instead of (代替), In spite of (儘管)。",
-            questions: [
-                { q: "The game was canceled ___ the rain.", options: ["because", "due", "because of", "since"], ans: 2, explain: "the rain 是名詞，前面要用介係詞片語 Because of。Because 後面要接子句。" },
-                { q: "___ the bad weather, we went hiking.", options: ["Although", "In spite of", "Even if", "Because of"], ans: 1, explain: "儘管天氣不好 (名詞片語)，用 In spite of。Although 後面要接子句。" },
-                { q: "I'll have tea ___ coffee.", options: ["instead", "instead of", "replace", "exchange"], ans: 1, explain: "Instead of (代替/而不是) + 名詞。" }
-            ]
-        },
-        {
-            id: 9,
-            title: "進階連接詞",
-            tags: ["Conjunctions"],
-            concept: "雖然：Although/Though。除非：Unless (=If not)。<br>一旦：As soon as。只要：Provided that。",
-            questions: [
-                { q: "You will fail ___ you study harder.", options: ["if", "unless", "when", "because"], ans: 1, explain: "Unless = If...not。句意：你會失敗，「除非」你更努力讀書。" },
-                { q: "___ he is rich, he is stingy.", options: ["Despite", "In spite of", "Although", "However"], ans: 2, explain: "he is rich 是子句，用連接詞 Although (雖然)。Despite 接名詞。" },
-                { q: "I will leave ___ he arrives.", options: ["as soon as", "so that", "unless", "provided"], ans: 0, explain: "As soon as (一...就...)。" }
-            ]
-        },
-        {
-            id: 10,
-            title: "子句與倒裝",
-            tags: ["Clauses", "Inversion"],
-            concept: "限定 vs 非限定(逗號)。<br>否定副詞放句首的倒裝：Never/Rarely/Only then + 助動詞 + S + V。",
-            questions: [
-                { q: "Only then ___ realize my mistake.", options: ["I did", "did I", "I had", "had I"], ans: 1, explain: "Only + 時間副詞放句首，句子要倒裝 (助動詞移到主詞前)。" },
-                { q: "My father, ___ lives in Taipei, is a doctor.", options: ["that", "who", "which", "whom"], ans: 1, explain: "非限定用法 (有逗號)，補充說明獨一無二的對象，不能用 That，人要用 Who。" },
-                { q: "Never ___ such a beautiful sight.", options: ["I have seen", "have I seen", "did I see", "I saw"], ans: 1, explain: "Never 放句首，倒裝。完成式倒裝：Have + S + p.p.。" }
-            ]
-        },
-        {
-            id: 11,
-            title: "分詞構句 (高階必考)",
-            tags: ["Participles"],
-            concept: "<strong>分詞構句</strong>：簡化子句。<br>主動用 V-ing，被動用 p.p.。注意省略的主詞必須與主要子句主詞一致。",
-            questions: [
-                { q: "___ by the dog, the boy cried.", options: ["Biting", "Bit", "Bitten", "To bite"], ans: 2, explain: "男孩是「被」狗咬，省略了 Because he was...，保留 p.p. (Bitten)。" },
-                { q: "___ the room, I saw a spider.", options: ["Entered", "Entering", "Enter", "To enter"], ans: 1, explain: "我進入房間 (主動)，省略 When I entered...，改為 V-ing (Entering)。" },
-                { q: "The girl ___ in the corner is my sister.", options: ["stands", "standing", "stood", "is standing"], ans: 1, explain: "形容詞子句簡化：The girl (who is) standing...，主動用 V-ing 修飾名詞。" }
-            ]
-        },
-        {
-            id: 12,
-            title: "直接與間接引語",
-            tags: ["Reported Speech"],
-            concept: "時態後退：現在→過去，過去→過完。<br>疑問句改間接問句：Ask if/whether... 或 Ask wh-word + S + V。",
-            questions: [
-                { q: "He said, 'I am busy.' → He said that he ___ busy.", options: ["is", "was", "were", "had been"], ans: 1, explain: "主要動詞 said 是過去式，引號內的 am 要退一步變成 was。" },
-                { q: "She asked me ___.", options: ["where was I", "where I was", "where am I", "I was where"], ans: 1, explain: "間接問句不倒裝，順序為：疑問詞 + S + V。" },
-                { q: "Tom said he ___ the movie before.", options: ["saw", "has seen", "had seen", "sees"], ans: 2, explain: "他說話時(過去)，看電影是「更早之前」的事，故用過去完成式 had seen。" }
-            ]
-        },
-        {
-            id: 13,
-            title: "虛主詞與分裂句",
-            tags: ["It patterns"],
-            concept: "虛主詞：It is adj to V。<br>分裂句(強調)：It is ... that ... (正是...發生了...)。",
-            questions: [
-                { q: "It is important for us ___ English.", options: ["learn", "learning", "to learn", "learned"], ans: 2, explain: "虛主詞 It ... to V 句型。" },
-                { q: "It was John ___ broke the window.", options: ["who", "which", "what", "whom"], ans: 0, explain: "強調句 It is/was X that/who...。強調人可用 who 或 that。" },
-                { q: "I found ___ difficult to finish the job.", options: ["that", "this", "it", "x"], ans: 2, explain: "虛受詞 it。I found it adj to V。" }
-            ]
-        },
-        {
-            id: 14,
-            title: "文意推論與克漏字",
-            tags: ["Reading Grammar"],
-            concept: "綜合應用：判斷代名詞指涉對象、連接詞的邏輯關係、子句結構分析。",
-            questions: [
-                { q: "Technology helps us; ___, it creates new problems.", options: ["similarly", "for example", "on the other hand", "consequently"], ans: 2, explain: "前句講好處(help)，後句講壞處(problems)，語氣轉折，選 On the other hand (另一方面)。" },
-                { q: "Students ___ study hard will succeed.", options: ["who", "which", "whom", "where"], ans: 0, explain: "關係代名詞當主詞，修飾 Students (人)，用 Who。" },
-                { q: "Some agree, while ___ disagree.", options: ["another", "other", "others", "the other"], ans: 2, explain: "Some... others... (有些人...另有些人...) 的固定用法。" }
-            ]
-        }
-    ];
-
-    // --- Core Logic ---
-    let currentUnit = null;
-    let currentQIndex = 0;
-    let score = 0;
-    let correctCount = 0;
-
-    const menuView = document.getElementById('menu-view');
-    const gameInterface = document.getElementById('game-interface');
-    const resultView = document.getElementById('result-view');
-    const header = document.getElementById('main-header');
-
-    // Init
-    function init() {
-        syllabus.forEach(item => {
-            // Update Syllabus Question Text for logic fix in ID 1
-            if(item.id === 1) {
-                 item.questions[1].q = "___ he comes or not doesn't matter. (請選出最佳連接詞)";
-                 item.questions[1].options = ["That", "Whether", "What", "Which"];
-                 item.questions[1].ans = 1;
-                 item.questions[1].explain = "Whether...or not 是標準的名詞子句用法，表「是否」。";
-            }
-
-            const card = document.createElement('div');
-            card.className = 'topic-card';
-            card.onclick = () => loadUnit(item.id);
-            
-            let tagsHtml = item.tags.map(t => `<span class="tag ${t==='Participles'?'highlight':''}">${t}</span>`).join('');
-
-            card.innerHTML = `
-                <div class="card-header">
-                    <span class="topic-num">UNIT ${item.id.toString().padStart(2, '0')}</span>
-                </div>
-                <div class="topic-title">${item.title}</div>
-                <div class="topic-tags">${tagsHtml}</div>
-            `;
-            menuView.appendChild(card);
-        });
+/*
+  Data Structure designed for High School Syllabus
+  UPDATED: Each unit now contains a large pool of questions.
+  LOGIC: The system randomly selects 5 questions from the pool for each quiz session.
+*/
+const syllabus = [
+    {
+        id: 1,
+        title: "句子結構與五大句型",
+        tags: ["Sentence Structure", "Clauses"],
+        concept: "<strong>五大句型</strong>決定句子的骨架 (S+V+O+C)。<br>注意<strong>名詞子句</strong>當主詞/受詞，<strong>形容詞子句</strong>修飾名詞，以及連接詞的邏輯。",
+        questions: [
+            { q: "We found the movie ___.", options: ["bored", "boringly", "boring", "bore"], ans: 2, explain: "本句為 S+V+O+C。受詞 the movie 是事物，補語用 V-ing (令人...的)，故選 boring。" },
+            { q: "___ he comes or not doesn't matter.", options: ["That", "Whether", "What", "Which"], ans: 1, explain: "Whether...or not 是標準的名詞子句用法，表「是否」。" },
+            { q: "The reason ___ he was late was unknown.", options: ["which", "why", "that", "because"], ans: 1, explain: "先行詞 The reason，關係副詞用 why (或 that)。" },
+            { q: "He is rich, ___ he is not happy.", options: ["so", "but", "therefore", "however"], ans: 1, explain: "逗號連接兩子句需用對等連接詞。However 是副詞。" },
+            { q: "They consider him ___ a genius.", options: ["to be", "is", "being", "as"], ans: 0, explain: "consider...to be... 視為。to be 可省略。" },
+            { q: "I made sure ___ everything was in order.", options: ["that", "what", "which", "when"], ans: 0, explain: "make sure 後接名詞子句 that。" },
+            { q: "Do you know ___ she lives?", options: ["the place", "where the place", "where", "which"], ans: 2, explain: "where 引導名詞子句，含先行詞概念。" },
+            { q: "This is the car ___ he bought.", options: ["what", "who", "which", "whose"], ans: 2, explain: "修飾事物 car，用 which/that。" },
+            { q: "She keeps her room ___.", options: ["neatly", "neat", "to neat", "be neat"], ans: 1, explain: "keep + O + C (形容詞)。" },
+            { q: "The news that the company closed ___ everyone.", options: ["surprised", "surprising", "surprise", "to surprise"], ans: 0, explain: "The news (主詞) ... surprised (動詞) everyone。" },
+            // Expanded to 30
+            { q: "___ is necessary to follow the rules.", options: ["That", "This", "It", "What"], ans: 2, explain: "虛主詞 It 代替後面的不定詞片語 to follow..." },
+            { q: "I don't know ___ to do next.", options: ["what", "how", "which", "where"], ans: 0, explain: "know what to do (知道做什麼)。" },
+            { q: "The man ___ I talked to is my uncle.", options: ["who", "whom", "which", "what"], ans: 1, explain: "talk to 的受詞，且是人，用 whom (口語可用 who)。" },
+            { q: "Please tell me ___ the meeting starts.", options: ["when", "which", "what", "who"], ans: 0, explain: "tell me + 名詞子句，詢問時間用 when。" },
+            { q: "Whatever you do, ___ it well.", options: ["doing", "to do", "do", "did"], ans: 2, explain: "祈使句，用原形動詞 do 開頭。" },
+            { q: "The book ___ on the desk is mine.", options: ["laying", "lying", "laid", "lied"], ans: 1, explain: "Lie (躺/位於) 的 V-ing 是 lying。" },
+            { q: "It was John ___ broke the window.", options: ["which", "what", "who", "whom"], ans: 2, explain: "分裂句 It was...who... 強調 John。" },
+            { q: "Not only ___ beautiful, but she is also smart.", options: ["she is", "is she", "she does", "does she"], ans: 1, explain: "Not only 放句首，句子要倒裝 (is she)。" },
+            { q: "___ seems that he is sick.", options: ["That", "It", "He", "What"], ans: 1, explain: "It seems that... (看起來似乎...)。" },
+            { q: "The problem is ___ we don't have enough money.", options: ["what", "that", "which", "if"], ans: 1, explain: "The problem is that... (問題在於...)，that 引導補語子句。" },
+            { q: "Never ___ I seen such a big dog.", options: ["did", "have", "do", "had"], ans: 1, explain: "Never 倒裝，配合 seen (p.p.)，用完成式助動詞 have。" },
+            { q: "___ hard, and you will succeed.", options: ["Work", "Working", "To work", "Worked"], ans: 0, explain: "祈使句 + and (那麼)...。" },
+            { q: "He ran fast ___ he could catch the bus.", options: ["in order", "so that", "because", "due to"], ans: 1, explain: "So that (為了/以便) 接子句。" },
+            { q: "Walking down the street, ___.", options: ["a dog bit me", "I was bitten by a dog", "a dog saw me", "it rained"], ans: 1, explain: "分詞構句 Walking 的主詞必須是 I。" },
+            { q: "There ___ a book and two pens on the desk.", options: ["is", "are", "have", "has"], ans: 0, explain: "There is/are 配合最近的主詞 (a book 單數)。" },
+            { q: "___ you agree or not, we will go.", options: ["If", "Whether", "Because", "Unless"], ans: 1, explain: "Whether...or not (無論是否)。" },
+            { q: "That is the village ___ I was born.", options: ["which", "where", "that", "what"], ans: 1, explain: "修飾地點且子句完整，用關係副詞 where。" },
+            { q: "All ___ glitters is not gold.", options: ["that", "what", "which", "who"], ans: 0, explain: "先行詞為 All，關代習慣用 that。" },
+            { q: "I regard him ___ my best friend.", options: ["for", "as", "to be", "is"], ans: 1, explain: "Regard...as... (視...為...)。" },
+            { q: "___ rich, he is not happy.", options: ["Although", "Despite", "Because", "Even"], ans: 0, explain: "Although (he is) rich... 分詞構句/省略句。" }
+        ]
+    },
+    {
+        id: 2,
+        title: "進階時態整合",
+        tags: ["Perfect Tense", "Future"],
+        concept: "高中重點：<strong>完成進行式</strong>、<strong>未來完成式</strong>、過去完成式。",
+        questions: [
+            { q: "By next year, I ___ here for ten years.", options: ["will live", "will have lived", "have lived", "am living"], ans: 1, explain: "By + 未來時間，用未來完成式。" },
+            { q: "When I arrived, the train ___.", options: ["left", "has left", "had left", "was leaving"], ans: 2, explain: "過去某時之前已發生，用過去完成式。" },
+            { q: "She is tired because she ___ all day.", options: ["is working", "has been working", "worked", "had worked"], ans: 1, explain: "持續到現在的動作，用現在完成進行式。" },
+            { q: "If you call tomorrow, I ___ the report.", options: ["finish", "will finish", "will have finished", "had finished"], ans: 2, explain: "明天某時將已完成，用未來完成式。" },
+            { q: "He ___ TV when Mom came in.", options: ["is watching", "was watching", "watched", "has watched"], ans: 1, explain: "過去正在進行，用過去進行式。" },
+            { q: "They ___ each other since childhood.", options: ["know", "knew", "have known", "had known"], ans: 2, explain: "Since + 過去時間，搭配現在完成式。" },
+            { q: "I found the key I ___.", options: ["lost", "have lost", "had lost", "was losing"], ans: 2, explain: "找到之前丟的，用過去完成式。" },
+            { q: "The meeting ___ for ten minutes.", options: ["has begun", "has been starting", "has been on", "is on"], ans: 2, explain: "持續狀態用 has been on。begin 是瞬間動詞不能持續。" },
+            { q: "Look! The bus ___.", options: ["come", "comes", "is coming", "came"], ans: 2, explain: "Look! 表示現在正在發生。" },
+            { q: "By the time police arrived, the thief ___.", options: ["fled", "flee", "had fled", "has fled"], ans: 2, explain: "過去完成式。" },
+            { q: "I ___ to the cinema three times this month.", options: ["go", "went", "have been", "was"], ans: 2, explain: "這段時間內的經驗/次數，用現在完成式。" },
+            { q: "When I got home, they ___ dinner.", options: ["ate", "were eating", "have eaten", "eat"], ans: 1, explain: "過去某時正在做，用過去進行式。" },
+            { q: "I ___ him for a long time.", options: ["know", "am knowing", "have known", "knew"], ans: 2, explain: "持續一段時間的狀態，用現在完成式。" },
+            { q: "The sun ___ in the east.", options: ["rise", "rises", "rose", "is rising"], ans: 1, explain: "真理/事實用現在簡單式。" },
+            { q: "He said he ___ the work by 6 PM.", options: ["will finish", "would finish", "finishes", "finished"], ans: 1, explain: "過去講的未來 (過去未來式)。" },
+            { q: "Before she came to Taipei, she ___ in Kaohsiung.", options: ["lived", "has lived", "had lived", "lives"], ans: 2, explain: "過去之前，用過去完成式。" },
+            { q: "I ___ English for 10 years by next June.", options: ["study", "will study", "will have studied", "have studied"], ans: 2, explain: "By + 未來時間 + for + 期間，用未來完成式。" },
+            { q: "While I ___ down the street, I met an old friend.", options: ["walked", "was walking", "walk", "am walking"], ans: 1, explain: "While 連接進行的動作。" },
+            { q: "Since he moved here, he ___ happy.", options: ["is", "was", "has been", "had been"], ans: 2, explain: "Since 引導完成式。" },
+            { q: "The train ___ at 9:00 every day.", options: ["leave", "leaves", "leaving", "left"], ans: 1, explain: "時刻表/常態用現在簡單式。" },
+            { q: "Don't call me at 8. I ___ dinner.", options: ["will have", "will be having", "have", "had"], ans: 1, explain: "未來正在進行，用未來進行式。" },
+            { q: "She asked if I ___ the movie.", options: ["see", "saw", "have seen", "had seen"], ans: 3, explain: "問的時候，看電影是更早的事。" },
+            { q: "We ___ for you for an hour.", options: ["wait", "are waiting", "have been waiting", "waited"], ans: 2, explain: "強調持續等待的動作。" },
+            { q: "I will call you as soon as I ___ there.", options: ["arrive", "will arrive", "arrived", "am arriving"], ans: 0, explain: "時間副詞子句用現在式代替未來式。" },
+            { q: "He ___ never ___ to Japan.", options: ["has, been", "has, gone", "did, go", "was, going"], ans: 0, explain: "Have been to (去過...經驗)。" },
+            { q: "Usually he ___ to work by bus.", options: ["go", "goes", "is going", "went"], ans: 1, explain: "習慣動作。" },
+            { q: "Listen! Someone ___ the piano.", options: ["plays", "played", "is playing", "has played"], ans: 2, explain: "Listen! 表示正在發生。" },
+            { q: "By 2050, technology ___ significantly.", options: ["improves", "will improve", "will have improved", "improved"], ans: 2, explain: "未來完成式。" },
+            { q: "I wish I ___ harder when I was young.", options: ["study", "studied", "had studied", "have studied"], ans: 2, explain: "與過去事實相反的願望，用過去完成式。" },
+            { q: "It is high time you ___ to bed.", options: ["go", "went", "have gone", "will go"], ans: 1, explain: "It is high time + 過去式動詞 (該是...的時候了)。" }
+        ]
+    },
+    {
+        id: 3,
+        title: "助動詞與假設推測",
+        tags: ["Modals", "Assumption"],
+        concept: "重點：<strong>助動詞 + have p.p.</strong> 表對過去的推測或惋惜。",
+        questions: [
+            { q: "The ground is wet. It ___ last night.", options: ["must rain", "should rain", "must have rained", "should have rained"], ans: 2, explain: "對過去的肯定推測。" },
+            { q: "You ___ me the truth.", options: ["should tell", "should have told", "must tell", "could tell"], ans: 1, explain: "本該做卻沒做 (Should have p.p.)。" },
+            { q: "He ___ be at home; I saw him out.", options: ["mustn't", "can't", "shouldn't", "won't"], ans: 1, explain: "can't be (不可能)。" },
+            { q: "If I had known, I ___ you.", options: ["would help", "will help", "would have helped", "had helped"], ans: 2, explain: "與過去事實相反的假設。" },
+            { q: "I wish I ___ taller.", options: ["am", "were", "be", "have been"], ans: 1, explain: "與現在事實相反，be 動詞用 were。" },
+            { q: "He ___ driven so fast.", options: ["shouldn't have", "couldn't have", "wouldn't have", "might not"], ans: 0, explain: "本不該開這麼快 (卻開了)。" },
+            { q: "They ___ be tired now.", options: ["must", "can", "should", "will"], ans: 0, explain: "Must (一定) 表強烈推測。" },
+            { q: "She ___ come, but she didn't.", options: ["could have", "must have", "should", "might"], ans: 0, explain: "Could have (本來可以...但沒做)。" },
+            { q: "It is essential that he ___.", options: ["attend", "attends", "attended", "to attend"], ans: 0, explain: "Essential that S + (should) + V。" },
+            { q: "___ I come in?", options: ["Must", "Should", "May", "Will"], ans: 2, explain: "May I... 請求許可。" },
+            { q: "If I were you, I ___ accept the offer.", options: ["will", "would", "can", "shall"], ans: 1, explain: "與現在事實相反的假設。" },
+            { q: "He talks as if he ___ a boss.", options: ["is", "was", "were", "has been"], ans: 2, explain: "As if (彷彿) + 假設語氣 (were)。" },
+            { q: "You ___ smoke here.", options: ["mustn't", "don't have to", "needn't", "won't"], ans: 0, explain: "Mustn't (禁止)。" },
+            { q: "We ___ hurry; we have plenty of time.", options: ["mustn't", "needn't", "can't", "wouldn't"], ans: 1, explain: "Needn't (不需)。" },
+            { q: "If it ___ tomorrow, we will cancel.", options: ["rains", "will rain", "rained", "rain"], ans: 0, explain: "條件句用現在式代替未來式。" },
+            { q: "Without water, nothing ___ live.", options: ["can", "could", "will", "may"], ans: 1, explain: "Without (若沒有) 表假設，配 could。" },
+            { q: "I would rather you ___ now.", options: ["leave", "left", "leaving", "to leave"], ans: 1, explain: "Would rather S + 過去式 (寧願你...)。" },
+            { q: "___ it rain, I would stay home.", options: ["If", "Should", "Were", "Had"], ans: 1, explain: "萬一 (If it should rain) 的倒裝。" },
+            { q: "You ___ better see a doctor.", options: ["would", "should", "had", "did"], ans: 2, explain: "Had better (最好)。" },
+            { q: "It is surprising that he ___ say that.", options: ["should", "would", "could", "might"], ans: 0, explain: "表驚訝的情緒形容詞子句用 should。" }
+        ]
+    },
+    {
+        id: 4,
+        title: "被動語態進階",
+        tags: ["Passive Voice"],
+        concept: "注意：<strong>進行被動</strong> (being p.p.)、<strong>完成被動</strong> (been p.p.)。",
+        questions: [
+            { q: "The bridge is ___ built.", options: ["building", "been", "being", "built"], ans: 2, explain: "is being built (正在被建造)。" },
+            { q: "The work has ___ done.", options: ["been", "being", "be", "is"], ans: 0, explain: "has been done (已經被做)。" },
+            { q: "He was seen ___ the house.", options: ["enter", "to enter", "entering", "entered"], ans: 1, explain: "感官動詞被動改 to V。" },
+            { q: "It will ___ finished soon.", options: ["be", "been", "being", "have"], ans: 0, explain: "will be p.p.。" },
+            { q: "He is believed ___ rich.", options: ["to be", "that is", "being", "is"], ans: 0, explain: "S + is believed + to V。" },
+            { q: "I had my watch ___.", options: ["repair", "repaired", "repairing", "to repair"], ans: 1, explain: "Have + O + p.p. (讓...被...)" },
+            { q: "The letter must ___ sent.", options: ["be", "have", "been", "being"], ans: 0, explain: "Must be p.p.。" },
+            { q: "A new plan is ___ discussed.", options: ["being", "been", "be", "to be"], ans: 0, explain: "is being p.p. (正在被...)" },
+            { q: "He was made ___ the floor.", options: ["wash", "to wash", "washing", "washed"], ans: 1, explain: "Make 被動改 to V。" },
+            { q: "English is ___ spoken here.", options: ["wide", "widely", "wider", "widest"], ans: 1, explain: "副詞修飾 p.p.。" },
+            { q: "The door remained ___.", options: ["lock", "locking", "locked", "to lock"], ans: 2, explain: "Remain + p.p. (保持被...狀態)。" },
+            { q: "I want the work ___ by 5.", options: ["finish", "finished", "finishing", "to finish"], ans: 1, explain: "Want + O + p.p. (希望某事被做)。" },
+            { q: "The problem ___ solved yet.", options: ["hasn't", "hasn't been", "isn't being", "wasn't"], ans: 1, explain: "Has not been p.p.。" },
+            { q: "Who was the book written ___?", options: ["by", "with", "from", "at"], ans: 0, explain: "被動語態介係詞 by。" },
+            { q: "The boy got ___ in the rain.", options: ["catch", "caught", "catching", "to catch"], ans: 1, explain: "Get + p.p. (被.../遭...)" },
+            { q: "The meeting is to ___ held tomorrow.", options: ["be", "been", "being", "have"], ans: 0, explain: "Be to be p.p. (預定被)。" },
+            { q: "Nothing can be ___ about it.", options: ["do", "done", "doing", "did"], ans: 1, explain: "Can be done。" }
+        ]
+    },
+    {
+        id: 5,
+        title: "名詞、代名詞與關代",
+        tags: ["Nouns", "Pronouns"],
+        concept: "關係代名詞與不定代名詞用法。",
+        questions: [
+            { q: "The man ___ I respect is him.", options: ["who", "whom", "which", "what"], ans: 1, explain: "受格用 Whom。" },
+            { q: "___ of the two boys is tall.", options: ["All", "Both", "Either", "None"], ans: 1, explain: "兩者都 Both。" },
+            { q: "A friend ___ father is a pilot.", options: ["who", "whom", "whose", "which"], ans: 2, explain: "所有格 Whose。" },
+            { q: "There is no one ___ helps me.", options: ["who", "but", "which", "whom"], ans: 1, explain: "No one but... (沒有人不...)" },
+            { q: "The book, ___ cover is red.", options: ["whose", "which", "that", "what"], ans: 0, explain: "Whose cover。" },
+            { q: "___ of them knows the answer.", options: ["None", "All", "Both", "Many"], ans: 0, explain: "None (三者以上皆非) 當單數。" },
+            { q: "This is the very thing ___ I want.", options: ["that", "which", "what", "who"], ans: 0, explain: "Very 強調用 that。" },
+            { q: "He has two dogs; one is white, ___ is black.", options: ["another", "other", "the other", "others"], ans: 2, explain: "One...the other (兩者之一...另一個)。" },
+            { q: "Those ___ want to go please sign here.", options: ["who", "which", "whom", "whose"], ans: 0, explain: "Those who (凡是...的人)。" },
+            { q: "___ comes will be welcome.", options: ["Whoever", "Who", "Whomever", "Whose"], ans: 0, explain: "Whoever = Anyone who。" },
+            { q: "This is the same watch ___ I lost.", options: ["as", "that", "which", "what"], ans: 0, explain: "The same...as (像...一樣的/同款)。" },
+            { q: "He isn't the man ___ he used to be.", options: ["what", "which", "that", "who"], ans: 2, explain: "The man that... (那個...的人)。" },
+            { q: "I have two pens. ___ is red.", options: ["Either", "Both", "All", "Neither"], ans: 0, explain: "Either (兩者任一)。" },
+            { q: "Make yourself ___ home.", options: ["at", "in", "on", "to"], ans: 0, explain: "At home。" },
+            { q: "There is ___ wrong with the car.", options: ["something", "anything", "nothing", "everything"], ans: 0, explain: "Something wrong。" }
+        ]
+    },
+    {
+        id: 6,
+        title: "形容詞與副詞比較",
+        tags: ["Comparison", "Transition"],
+        concept: "倍數比較、連接副詞、比較級句型。",
+        questions: [
+            { q: "Twice as ___ as.", options: ["big", "bigger", "biggest", "more big"], ans: 0, explain: "As adj as。" },
+            { q: "He tried; ___, he failed.", options: ["therefore", "however", "moreover", "otherwise"], ans: 1, explain: "轉折語氣。" },
+            { q: "Of the two, he is the ___.", options: ["taller", "tallest", "tall", "more tall"], ans: 0, explain: "兩者間比較用 the + 比較級。" },
+            { q: "The later, the ___.", options: ["good", "better", "best", "well"], ans: 1, explain: "The more... the more..." },
+            { q: "Much ___ than.", options: ["heavy", "heavier", "heaviest", "more heavy"], ans: 1, explain: "Much 修飾比較級。" },
+            { q: "As ___ as possible.", options: ["soon", "sooner", "soonest", "fast"], ans: 0, explain: "As soon as possible。" },
+            { q: "One of the ___ boys.", options: ["tall", "taller", "tallest", "tallness"], ans: 2, explain: "One of the + 最高級。" },
+            { q: "He works ___ than me.", options: ["hard", "harder", "hardest", "hardly"], ans: 1, explain: "Hard 的比較級 harder。" },
+            { q: "The population is larger than ___ of Tainan.", options: ["that", "this", "it", "those"], ans: 0, explain: "That 代替前面單數名詞 population。" },
+            { q: "He is senior ___ me.", options: ["than", "to", "for", "with"], ans: 1, explain: "Senior to (比...年長/資深)。" },
+            { q: "This is the ___ interesting book.", options: ["more", "most", "very", "much"], ans: 1, explain: "The most + 多音節形容詞。" },
+            { q: "He runs ___ fast ___ I can't catch him.", options: ["so, that", "too, to", "very, that", "as, as"], ans: 0, explain: "So...that... (如此...以至於)。" },
+            { q: "He is ___ busy to go.", options: ["so", "very", "too", "quite"], ans: 2, explain: "Too...to... (太...而不能)。" },
+            { q: "___, I don't like it.", options: ["Personally", "Personal", "Person", "Personality"], ans: 0, explain: "副詞修飾全句。" },
+            { q: "He is not ___ smart as you.", options: ["so", "more", "very", "too"], ans: 0, explain: "Not so/as ... as。" }
+        ]
+    },
+    {
+        id: 7,
+        title: "特殊動詞形式",
+        tags: ["Causative", "Senses"],
+        concept: "使役動詞與感官動詞用法。",
+        questions: [
+            { q: "I got him ___ the car.", options: ["wash", "to wash", "washing", "washed"], ans: 1, explain: "Get 人 to V。" },
+            { q: "Made us ___.", options: ["work", "to work", "working", "worked"], ans: 0, explain: "Make 人 原V。" },
+            { q: "Felt the house ___.", options: ["shook", "to shake", "shaking", "shaken"], ans: 2, explain: "Feel O V-ing/原V。" },
+            { q: "Had the roof ___.", options: ["repair", "repaired", "repairing", "to repair"], ans: 1, explain: "Have 物 p.p.。" },
+            { q: "Heard the baby ___.", options: ["cry", "to cry", "cried", "crying"], ans: 0, explain: "Hear O 原V (全程) 或 Ving。" },
+            { q: "Let him ___.", options: ["go", "to go", "going", "gone"], ans: 0, explain: "Let O 原V。" },
+            { q: "Help me ___.", options: ["move", "moving", "moved", "moves"], ans: 0, explain: "Help (to) V。" },
+            { q: "Saw him ___.", options: ["cross", "to cross", "crossed", "crossing"], ans: 0, explain: "See O 原V。" },
+            { q: "Spend time ___.", options: ["read", "reading", "to read", "reads"], ans: 1, explain: "Spend time V-ing。" },
+            { q: "Find it difficult ___.", options: ["do", "to do", "doing", "did"], ans: 1, explain: "Difficult to V。" },
+            { q: "Catch him ___.", options: ["steal", "stealing", "to steal", "stole"], ans: 1, explain: "Catch O V-ing。" },
+            { q: "Keep him ___.", options: ["wait", "waiting", "to wait", "waited"], ans: 1, explain: "Keep O V-ing。" },
+            { q: "Leave the door ___.", options: ["open", "opened", "opening", "to open"], ans: 0, explain: "Leave O Adj (狀態)。" },
+            { q: "I won't let you ___ me down.", options: ["let", "to let", "letting", "lets"], ans: 0, explain: "Let O 原V。" },
+            { q: "Notice him ___ out.", options: ["go", "to go", "gone", "went"], ans: 0, explain: "Notice O 原V/V-ing。" }
+        ]
+    },
+    {
+        id: 8,
+        title: "介係詞與片語",
+        tags: ["Prepositions"],
+        concept: "重要介係詞片語與搭配詞。",
+        questions: [
+            { q: "Canceled ___ rain.", options: ["because", "due", "because of", "since"], ans: 2, explain: "Because of + N。" },
+            { q: "___ bad weather, we went.", options: ["Although", "In spite of", "Because", "Unless"], ans: 1, explain: "In spite of + N (儘管)。" },
+            { q: "Tea ___ coffee.", options: ["instead", "instead of", "replace", "with"], ans: 1, explain: "Instead of (代替)。" },
+            { q: "Apologize ___ the delay.", options: ["for", "to", "of", "with"], ans: 0, explain: "For + 原因。" },
+            { q: "Apply ___ everyone.", options: ["at", "to", "for", "in"], ans: 1, explain: "Apply to (適用於)。" },
+            { q: "Satisfied ___ it.", options: ["with", "at", "to", "for"], ans: 0, explain: "Satisfied with。" },
+            { q: "Due ___ hard work.", options: ["to", "for", "of", "at"], ans: 0, explain: "Due to (因為)。" },
+            { q: "Fond ___ music.", options: ["of", "for", "with", "at"], ans: 0, explain: "Fond of (喜歡)。" },
+            { q: "Capable ___ doing.", options: ["of", "to", "for", "in"], ans: 0, explain: "Capable of。" },
+            { q: "___ order to.", options: ["In", "On", "At", "For"], ans: 0, explain: "In order to。" },
+            { q: "Interested ___ it.", options: ["in", "on", "at", "with"], ans: 0, explain: "Interested in。" },
+            { q: "Famous ___ its food.", options: ["for", "as", "to", "with"], ans: 0, explain: "Famous for (以...聞名)。" },
+            { q: "Belong ___ me.", options: ["to", "for", "at", "with"], ans: 0, explain: "Belong to。" },
+            { q: "Look forward to ___ you.", options: ["see", "seeing", "saw", "seen"], ans: 1, explain: "To 為介係詞，接 V-ing。" },
+            { q: "Depend ___ you.", options: ["on", "in", "at", "for"], ans: 0, explain: "Depend on。" },
+            { q: "Good ___ math.", options: ["at", "in", "for", "with"], ans: 0, explain: "Good at (擅長)。" },
+            { q: "Afraid ___ dogs.", options: ["of", "for", "with", "at"], ans: 0, explain: "Afraid of。" }
+        ]
+    },
+    {
+        id: 9,
+        title: "進階連接詞",
+        tags: ["Conjunctions"],
+        concept: "連接詞與轉折語氣。",
+        questions: [
+            { q: "Fail ___ you study.", options: ["if", "unless", "when", "because"], ans: 1, explain: "Unless (除非)。" },
+            { q: "___ rich, he is stingy.", options: ["Although", "Despite", "Because", "So"], ans: 0, explain: "Although (雖然)。" },
+            { q: "Leave ___ he arrives.", options: ["as soon as", "unless", "though", "so"], ans: 0, explain: "As soon as (一...就)。" },
+            { q: "Provided ___ you pay.", options: ["that", "if", "unless", "when"], ans: 0, explain: "Provided that (假如)。" },
+            { q: "In case ___.", options: ["he comes", "he come", "of he comes", "coming"], ans: 0, explain: "In case (萬一) 接子句。" },
+            { q: "So that he ___.", options: ["can", "to", "for", "is"], ans: 0, explain: "So that (為了) + S + can/may..." },
+            { q: "___ he finished, he left.", options: ["As soon as", "No sooner", "Hardly", "While"], ans: 0, explain: "As soon as + 子句。" },
+            { q: "Not only... ___ also.", options: ["but", "and", "or", "so"], ans: 0, explain: "But also。" },
+            { q: "Even ___.", options: ["though", "if", "when", "what"], ans: 0, explain: "Even though (雖然)。" },
+            { q: "Either tea ___ coffee.", options: ["or", "nor", "and", "but"], ans: 0, explain: "Either...or。" },
+            { q: "Neither he ___ I.", options: ["nor", "or", "and", "but"], ans: 0, explain: "Neither...nor。" },
+            { q: "Wait ___ he comes.", options: ["until", "unless", "if", "because"], ans: 0, explain: "Until (直到)。" },
+            { q: "No sooner had I arrived ___ he left.", options: ["than", "when", "before", "after"], ans: 0, explain: "No sooner...than..." },
+            { q: "Scarcely had I arrived ___ he left.", options: ["when", "than", "after", "before"], ans: 0, explain: "Scarcely...when..." },
+            { q: "___ he is young, he is wise.", options: ["While", "Since", "As", "Because"], ans: 0, explain: "While (雖然/儘管) 放句首表轉折。" }
+        ]
+    },
+    {
+        id: 10,
+        title: "子句與倒裝",
+        tags: ["Clauses", "Inversion"],
+        concept: "倒裝句型與進階子句。",
+        questions: [
+            { q: "Only then ___ I realize.", options: ["did", "do", "have", "had"], ans: 0, explain: "Only + 時間副詞放句首倒裝。" },
+            { q: "My dad, ___ lives here.", options: ["who", "that", "which", "whom"], ans: 0, explain: "逗號後不用 that。" },
+            { q: "Never ___ I seen.", options: ["have", "did", "had", "do"], ans: 0, explain: "完成式倒裝 have。" },
+            { q: "Not until ___ left did he.", options: ["she", "did she", "had she", "she had"], ans: 0, explain: "Not until + 直述句 + 倒裝主句。" },
+            { q: "Seldom ___ he make.", options: ["does", "is", "has", "did"], ans: 0, explain: "Seldom 倒裝 + 原V (make)。" },
+            { q: "So happy ___.", options: ["was I", "I was", "did I", "I did"], ans: 0, explain: "So + Adj 放句首倒裝。" },
+            { q: "Here ___ the bus.", options: ["comes", "coming", "is coming", "come"], ans: 0, explain: "Here/There V S 倒裝。" },
+            { q: "Had I known, I ___.", options: ["would have", "would", "will", "can"], ans: 0, explain: "假設語氣倒裝。" },
+            { q: "Library ___ I study.", options: ["where", "which", "that", "what"], ans: 0, explain: "Where = In which。" },
+            { q: "Under no circumstances ___ you go.", options: ["should", "you should", "you can", "you will"], ans: 0, explain: "否定副詞片語倒裝。" },
+            { q: "Little ___ I know.", options: ["did", "do", "have", "was"], ans: 0, explain: "Little (一點也不) 倒裝。" },
+            { q: "On the hill ___ a tree.", options: ["stands", "standing", "stand", "is stand"], ans: 0, explain: "地方副詞放句首，完全倒裝。" },
+            { q: "Were I you, I ___ go.", options: ["would", "will", "can", "may"], ans: 0, explain: "If I were you 倒裝。" },
+            { q: "Rarely ___ she cry.", options: ["does", "is", "has", "did"], ans: 0, explain: "Rarely 倒裝。" },
+            { q: "Such was his anger ___ he hit him.", options: ["that", "so", "when", "as"], ans: 0, explain: "Such...that... 倒裝。" }
+        ]
+    },
+    {
+        id: 11,
+        title: "分詞構句 (高階必考)",
+        tags: ["Participles"],
+        concept: "分詞構句簡化原則。",
+        questions: [
+            { q: "___ by the dog, he cried.", options: ["Bitten", "Biting", "Bit", "To bite"], ans: 0, explain: "被咬 (Passive)。" },
+            { q: "___ the room, I saw him.", options: ["Entering", "Entered", "Enter", "To enter"], ans: 0, explain: "主動進入。" },
+            { q: "The girl ___ there is Mary.", options: ["standing", "stands", "stood", "is standing"], ans: 0, explain: "修飾語 (主動)。" },
+            { q: "___ nothing to say, he left.", options: ["Having", "Had", "Has", "Have"], ans: 0, explain: "Having (主動擁有)。" },
+            { q: "The task ___ quickly.", options: ["completed", "completing", "complete", "to complete"], ans: 0, explain: "p.p. 表被動/完成。" },
+            { q: "___ from afar, it looks like...", options: ["Seen", "Seeing", "To see", "See"], ans: 0, explain: "被看到。" },
+            { q: "___ the work, I slept.", options: ["Having finished", "Finished", "Finishing", "Finish"], ans: 0, explain: "先做完 (完成分詞)。" },
+            { q: "Sat there ___.", options: ["reading", "read", "to read", "reads"], ans: 0, explain: "附帶動作 V-ing。" },
+            { q: "Difficult ___.", options: ["to do", "doing", "do", "done"], ans: 0, explain: "Difficult to V。" },
+            { q: "Weather ___, we will go.", options: ["permitting", "permits", "permitted", "permit"], ans: 0, explain: "獨立分詞構句。" },
+            { q: "Generally ___, girls are smarter.", options: ["speaking", "spoken", "speak", "to speak"], ans: 0, explain: "Generally speaking (一般來說)。" },
+            { q: "___ what to do, he cried.", options: ["Not knowing", "Not known", "Knowing not", "Known not"], ans: 0, explain: "否定分詞構句 Not V-ing。" },
+            { q: "Judging ___ his face, he is sad.", options: ["from", "by", "at", "in"], ans: 0, explain: "Judging from (從...判斷)。" },
+            { q: "The game ___, we went home.", options: ["over", "being over", "been over", "to be over"], ans: 1, explain: "獨立分詞 The game being over。" },
+            { q: "Compared ___ him, I am tall.", options: ["with", "to", "at", "for"], ans: 0, explain: "Compared with/to。" }
+        ]
+    },
+    {
+        id: 12,
+        title: "直接與間接引語",
+        tags: ["Reported Speech"],
+        concept: "時態後退與疑問句改寫。",
+        questions: [
+            { q: "Said he ___ busy.", options: ["was", "is", "will be", "has been"], ans: 0, explain: "過去式引述，時態後退。" },
+            { q: "Asked me ___.", options: ["where I was", "where was I", "I was where", "was I where"], ans: 0, explain: "間接問句不倒裝。" },
+            { q: "Said he ___ seen it.", options: ["had", "has", "have", "was"], ans: 0, explain: "過去完成式 (比說的時候更早)。" },
+            { q: "Asked ___ I could help.", options: ["if", "what", "that", "which"], ans: 0, explain: "Yes/No 問句改寫用 if。" },
+            { q: "Water ___ at 100°C.", options: ["boils", "boiled", "boiling", "boil"], ans: 0, explain: "真理不需退時態。" },
+            { q: "Told me he ___ go.", options: ["would", "will", "can", "may"], ans: 0, explain: "Will 變 Would。" },
+            { q: "Warned not ___ touch.", options: ["to", "do", "did", "touch"], ans: 0, explain: "Warn O not to V。" },
+            { q: "Wondered ___ he would.", options: ["when", "that", "if", "so"], ans: 0, explain: "Wh- 疑問詞保留。" },
+            { q: "Advised him ___.", options: ["to eat", "eating", "eat", "eats"], ans: 0, explain: "Advise O to V。" },
+            { q: "Told me he ___ there.", options: ["had lived", "has lived", "lives", "lived"], ans: 0, explain: "過去完成式。" },
+            { q: "He said, 'I can swim.' -> He said he ___ swim.", options: ["could", "can", "will", "would"], ans: 0, explain: "Can 變 Could。" },
+            { q: "She asked, 'Are you happy?' -> She asked ___ I was happy.", options: ["if", "that", "what", "which"], ans: 0, explain: "If/Whether。" },
+            { q: "He ordered me ___ the door.", options: ["to open", "open", "opening", "opened"], ans: 0, explain: "Order O to V。" },
+            { q: "She exclaimed that it ___ beautiful.", options: ["was", "is", "were", "be"], ans: 0, explain: "感嘆句引述，時態一致。" },
+            { q: "He promised that he ___ come.", options: ["would", "will", "can", "may"], ans: 0, explain: "Will 變 Would。" }
+        ]
+    },
+    {
+        id: 13,
+        title: "虛主詞與分裂句",
+        tags: ["It patterns"],
+        concept: "It 的特殊句型。",
+        questions: [
+            { q: "It is important ___ learn.", options: ["to", "for", "that", "of"], ans: 0, explain: "It... to V。" },
+            { q: "It was John ___ came.", options: ["who", "which", "what", "whose"], ans: 0, explain: "分裂句強調人。" },
+            { q: "Found ___ difficult.", options: ["it", "that", "this", "one"], ans: 0, explain: "虛受詞 it。" },
+            { q: "It is believed ___.", options: ["that", "what", "which", "if"], ans: 0, explain: "It is believed that..." },
+            { q: "It was in Paris ___ met.", options: ["that", "where", "which", "what"], ans: 0, explain: "分裂句強調地點。" },
+            { q: "___ goes without saying.", options: ["It", "That", "What", "This"], ans: 0, explain: "It goes without saying that..." },
+            { q: "No use ___.", options: ["crying", "to cry", "cry", "cried"], ans: 0, explain: "It is no use V-ing。" },
+            { q: "Take ___ for granted.", options: ["it", "that", "this", "one"], ans: 0, explain: "Take it for granted。" },
+            { q: "It was scenery ___ attracted.", options: ["that", "who", "what", "where"], ans: 0, explain: "分裂句強調事物。" },
+            { q: "Made ___ a rule.", options: ["it", "that", "this", "one"], ans: 0, explain: "Make it a rule to V。" },
+            { q: "It is time we ___ home.", options: ["went", "go", "have gone", "will go"], ans: 0, explain: "It is time + 過去式。" },
+            { q: "It appears ___ he is rich.", options: ["that", "what", "if", "so"], ans: 0, explain: "It appears that..." },
+            { q: "It occurred to me ___ I left it.", options: ["that", "what", "if", "so"], ans: 0, explain: "It occurred to me that..." },
+            { q: "It is kind ___ you.", options: ["of", "for", "to", "with"], ans: 0, explain: "It is adj of person to V。" },
+            { q: "It doesn't matter ___.", options: ["whether", "that", "what", "if"], ans: 0, explain: "Whether or not..." }
+        ]
+    },
+    {
+        id: 14,
+        title: "文意推論與克漏字",
+        tags: ["Reading Grammar"],
+        concept: "綜合應用能力。",
+        questions: [
+            { q: "Helps us; ___, creates problems.", options: ["on the other hand", "so", "therefore", "and"], ans: 0, explain: "轉折語氣。" },
+            { q: "Students ___ study succeed.", options: ["who", "which", "whom", "where"], ans: 0, explain: "關係代名詞主格。" },
+            { q: "Some... ___...", options: ["others", "other", "another", "the other"], ans: 0, explain: "Some...others..." },
+            { q: "Old man, ___ was blind.", options: ["who", "that", "which", "whom"], ans: 0, explain: "非限定關代。" },
+            { q: "Studied hard, ___ was true.", options: ["which", "what", "that", "it"], ans: 0, explain: "Which 指代前句。" },
+            { q: "No idea ___ to do.", options: ["what", "how", "which", "where"], ans: 0, explain: "What to do。" },
+            { q: "Worthy ___ being seen.", options: ["of", "to", "for", "at"], ans: 0, explain: "Worthy of。" },
+            { q: "Similar ___ that.", options: ["to", "as", "with", "of"], ans: 0, explain: "Similar to。" },
+            { q: "Not only ___ he.", options: ["is", "he is", "was", "be"], ans: 0, explain: "倒裝。" },
+            { q: "Larger than ___ of.", options: ["that", "this", "it", "those"], ans: 0, explain: "That 代替名詞。" },
+            { q: "One..., ___ is...", options: ["the other", "another", "other", "others"], ans: 0, explain: "One...the other (兩者)。" },
+            { q: "For example, ___.", options: ["A", "B", "C", "D"], ans: 0, explain: "舉例。" },
+            { q: "In addition, ___.", options: ["moreover", "however", "but", "so"], ans: 0, explain: "In addition = Moreover。" },
+            { q: "As a result, ___.", options: ["therefore", "however", "but", "yet"], ans: 0, explain: "As a result = Therefore。" },
+            { q: "On the contrary, ___.", options: ["conversely", "similarly", "so", "and"], ans: 0, explain: "相反地。" }
+        ]
     }
+];
 
-    function loadUnit(id) {
-        currentUnit = syllabus.find(u => u.id === id);
-        currentQIndex = 0;
-        score = 0;
-        correctCount = 0;
+// --- Core Logic ---
+let currentUnit = null;
+let currentQuestions = []; // Stores the 5 random questions
+let currentQIndex = 0;
+let score = 0;
+let correctCount = 0;
 
-        menuView.style.display = 'none';
-        header.style.display = 'none';
-        resultView.style.display = 'none';
-        gameInterface.style.display = 'block';
+const menuView = document.getElementById('menu-view');
+const gameInterface = document.getElementById('game-interface');
+const resultView = document.getElementById('result-view');
+const header = document.getElementById('main-header');
 
-        document.getElementById('level-indicator').innerText = `UNIT ${id.toString().padStart(2, '0')} : ${currentUnit.title}`;
-        document.getElementById('concept-area').innerHTML = `
-            <div class="concept-title">⚡ High School Grammar Point</div>
-            <div class="concept-content">${currentUnit.concept}</div>
+// Init
+function init() {
+    syllabus.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'topic-card';
+        card.onclick = () => loadUnit(item.id);
+        
+        let tagsHtml = item.tags.map(t => `<span class="tag ${t==='Participles'?'highlight':''}">${t}</span>`).join('');
+
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="topic-num">UNIT ${item.id.toString().padStart(2, '0')}</span>
+            </div>
+            <div class="topic-title">${item.title}</div>
+            <div class="topic-tags">${tagsHtml}</div>
         `;
+        menuView.appendChild(card);
+    });
+}
 
+function loadUnit(id) {
+    // 1. Find Unit Data
+    const unitData = syllabus.find(u => u.id === id);
+    currentUnit = unitData;
+    
+    // 2. Random Selection Logic (Shuffle & Slice 5)
+    // Create a shallow copy to avoid modifying original array order
+    const shuffled = [...unitData.questions].sort(() => 0.5 - Math.random());
+    currentQuestions = shuffled.slice(0, 5); // Select only 5
+
+    // 3. Reset Game State
+    currentQIndex = 0;
+    score = 0;
+    correctCount = 0;
+
+    // 4. UI Switch
+    menuView.style.display = 'none';
+    header.style.display = 'none';
+    resultView.style.display = 'none';
+    gameInterface.style.display = 'block';
+
+    document.getElementById('level-indicator').innerText = `UNIT ${id.toString().padStart(2, '0')} : ${unitData.title}`;
+    document.getElementById('concept-area').innerHTML = `
+        <div class="concept-title">⚡ High School Grammar Point</div>
+        <div class="concept-content">${unitData.concept}</div>
+    `;
+
+    renderQuestion();
+}
+
+function renderQuestion() {
+    // Use currentQuestions (the random 5) instead of currentUnit.questions
+    const qData = currentQuestions[currentQIndex];
+    
+    // UI Reset
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('explanation-area').style.display = 'none';
+    
+    // Progress Calculation based on 5 questions
+    const progress = ((currentQIndex) / currentQuestions.length) * 100;
+    document.getElementById('progress-fill').style.width = `${progress}%`;
+
+    document.getElementById('question-text').innerText = `Q${currentQIndex + 1}. ${qData.q}`;
+    
+    const optsDiv = document.getElementById('options-area');
+    optsDiv.innerHTML = '';
+
+    qData.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(idx, btn);
+        optsDiv.appendChild(btn);
+    });
+}
+
+function checkAnswer(selectedIdx, btnElement) {
+    const qData = currentQuestions[currentQIndex];
+    const allBtns = document.querySelectorAll('.opt-btn');
+    allBtns.forEach(b => b.disabled = true);
+
+    const isCorrect = selectedIdx === qData.ans;
+    
+    if (isCorrect) {
+        btnElement.classList.add('correct');
+        // Score calculation: 100 divided by 5 questions = 20 points each
+        score += 100 / currentQuestions.length;
+        correctCount++;
+    } else {
+        btnElement.classList.add('wrong');
+        allBtns[qData.ans].classList.add('correct');
+    }
+
+    const explainDiv = document.getElementById('explanation-area');
+    explainDiv.innerHTML = `<strong>${isCorrect ? 'Correct!' : 'Incorrect.'}</strong><br>${qData.explain}`;
+    explainDiv.style.display = 'block';
+    explainDiv.style.borderColor = isCorrect ? 'var(--success)' : 'var(--error)';
+
+    document.getElementById('next-btn').style.display = 'block';
+    
+    document.getElementById('progress-fill').style.width = `${((currentQIndex + 1) / currentQuestions.length) * 100}%`;
+}
+
+function nextQuestion() {
+    if (currentQIndex < currentQuestions.length - 1) {
+        currentQIndex++;
         renderQuestion();
+    } else {
+        showResult();
     }
+}
 
-    function renderQuestion() {
-        const qData = currentUnit.questions[currentQIndex];
-        
-        // UI Reset
-        document.getElementById('next-btn').style.display = 'none';
-        document.getElementById('explanation-area').style.display = 'none';
-        const progress = ((currentQIndex) / currentUnit.questions.length) * 100;
-        document.getElementById('progress-fill').style.width = `${progress}%`;
-
-        document.getElementById('question-text').innerText = `${currentQIndex + 1}. ${qData.q}`;
-        
-        const optsDiv = document.getElementById('options-area');
-        optsDiv.innerHTML = '';
-
-        qData.options.forEach((opt, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'opt-btn';
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(idx, btn);
-            optsDiv.appendChild(btn);
-        });
+function showResult() {
+    gameInterface.style.display = 'none';
+    resultView.style.display = 'block';
+    
+    const finalScore = Math.round(score);
+    const scoreEl = document.getElementById('final-score');
+    const msgEl = document.getElementById('result-msg');
+    
+    scoreEl.innerText = finalScore;
+    
+    if (finalScore === 100) {
+        scoreEl.style.borderColor = "var(--success)";
+        msgEl.innerText = "Perfect! You've mastered this topic. 🎓";
+    } else if (finalScore >= 60) {
+        scoreEl.style.borderColor = "var(--primary)";
+        msgEl.innerText = "Good job! Review the mistakes and try again. 👍";
+    } else {
+        scoreEl.style.borderColor = "var(--error)";
+        msgEl.innerText = "Keep practicing! Don't give up. 💪";
     }
+}
 
-    function checkAnswer(selectedIdx, btnElement) {
-        const qData = currentUnit.questions[currentQIndex];
-        const allBtns = document.querySelectorAll('.opt-btn');
-        allBtns.forEach(b => b.disabled = true);
+function showMenu() {
+    gameInterface.style.display = 'none';
+    resultView.style.display = 'none';
+    menuView.style.display = 'grid';
+    header.style.display = 'block';
+}
 
-        const isCorrect = selectedIdx === qData.ans;
-        
-        if (isCorrect) {
-            btnElement.classList.add('correct');
-            score += 100 / currentUnit.questions.length;
-            correctCount++;
-        } else {
-            btnElement.classList.add('wrong');
-            allBtns[qData.ans].classList.add('correct');
-        }
-
-        const explainDiv = document.getElementById('explanation-area');
-        explainDiv.innerHTML = `<strong>${isCorrect ? 'Correct!' : 'Incorrect.'}</strong><br>${qData.explain}`;
-        explainDiv.style.display = 'block';
-        explainDiv.style.borderColor = isCorrect ? 'var(--success)' : 'var(--error)';
-
-        document.getElementById('next-btn').style.display = 'block';
-        
-        // Update progress bar to next step logic visually
-        document.getElementById('progress-fill').style.width = `${((currentQIndex + 1) / currentUnit.questions.length) * 100}%`;
-    }
-
-    function nextQuestion() {
-        if (currentQIndex < currentUnit.questions.length - 1) {
-            currentQIndex++;
-            renderQuestion();
-        } else {
-            showResult();
-        }
-    }
-
-    function showResult() {
-        gameInterface.style.display = 'none';
-        resultView.style.display = 'block';
-        
-        const finalScore = Math.round(score);
-        const scoreEl = document.getElementById('final-score');
-        const msgEl = document.getElementById('result-msg');
-        
-        scoreEl.innerText = finalScore;
-        
-        if (finalScore === 100) {
-            scoreEl.style.borderColor = "var(--success)";
-            msgEl.innerText = "Perfect! You've mastered this topic. 🎓";
-        } else if (finalScore >= 60) {
-            scoreEl.style.borderColor = "var(--primary)";
-            msgEl.innerText = "Good job! Review the mistakes and try again. 👍";
-        } else {
-            scoreEl.style.borderColor = "var(--error)";
-            msgEl.innerText = "Keep practicing! Don't give up. 💪";
-        }
-    }
-
-    function showMenu() {
-        gameInterface.style.display = 'none';
-        resultView.style.display = 'none';
-        menuView.style.display = 'grid';
-        header.style.display = 'block';
-    }
-
-    init();
+init();
 </script>
 
 </body>
